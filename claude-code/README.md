@@ -265,4 +265,5 @@ export LC_ALL="zh_CN.UTF-8"
 - `settings-bailian-direct.json` — **直连百炼版配置（推荐，公网可用，不需要 CC-Switch / 公司内网）**
 - `zshrc.append` — 可选的 shell 配置片段（追加到 `~/.zshrc`）
 - `CLAUDE.md` — 项目级指令模板（放到任意项目根目录，Claude Code 会自动读取）
+- `zhengxi-views-install.md` — **郑希观点库 skill 的 Windows 安装最佳实践**（帮朋友装 Claude Code skill 用）
 - `README.md` — 本文档
