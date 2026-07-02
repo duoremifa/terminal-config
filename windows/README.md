@@ -93,6 +93,52 @@ Copy-Item "$PSScriptRoot\settings.json" $target -Force
 - `Alt+Shift++` : 垂直分屏
 - `Ctrl+Shift+W` : 关闭当前面板
 
+## PowerShell Profile（模块化）
+
+`powershell/` 目录是一份**模块化**的 PowerShell 5.1 profile，装在 `$env:USERPROFILE\Documents\WindowsPowerShell\` 下。重开终端自动加载。
+
+### 文件布局
+
+```
+WindowsPowerShell\
+├── Microsoft.PowerShell_profile.ps1    # 入口：点 source profile.d\ 下所有 .ps1
+└── profile.d\
+    ├── 01-psreadline.ps1               # PSReadLine 2.3.6 配置（预测性输入）
+    ├── 02-integrations.ps1             # 加载 Terminal-Icons + zoxide
+    ├── 03-workspaces.ps1               # ws / ws-add / ws-del 目录书签
+    ├── 04-aliases.ps1                  # 短命令别名（.. / ll / grep / ep / reload）
+    └── 05-functions.ps1                # 自定义函数（obs / today / clipf / gh-dl / which / tree-lite）
+```
+
+### 安装
+
+```powershell
+$src = "<repo>\windows\powershell"
+$dst = "$env:USERPROFILE\Documents\WindowsPowerShell"
+Copy-Item "$src\Microsoft.PowerShell_profile.ps1" $dst -Force
+Copy-Item "$src\profile.d" $dst -Recurse -Force
+```
+
+### 依赖（用户级安装，不需要管理员）
+
+| 模块 | 装法 |
+|---|---|
+| PSReadLine 2.3.6 | 从 PSGallery 下 `.nupkg` 解压到 `Modules\PSReadLine\` |
+| Terminal-Icons 0.11.0 | 同上，到 `Modules\Terminal-Icons\` |
+| zoxide 0.9.9 | GitHub Release 便携 zip 解压到 `$env:USERPROFILE\zoxide\`，加到用户 PATH |
+
+完整安装脚本和踩坑说明见 [`terminal-guide.md`](terminal-guide.md) §10。
+
+## 操作手册
+
+[`terminal-guide.md`](terminal-guide.md) 是一份**中文操作手册**，覆盖：
+
+- §1-9 终端基础：启动、分屏、快捷键速查、产品人常用命令、Obsidian/drawio 联动
+- §10-11 增强套件：PSReadLine / Terminal-Icons / zoxide 的使用
+- §12 故障排查（PS 5.1 GBK 编码、方块字图标、PSReadLine 不工作等）
+- §13 一页速查表（贴工位）
+- §14 **新手练习**（6 个循序渐进的练习任务 + 12 条自检清单）
+
 ## 卸载 / 回滚
 
 ```powershell
