@@ -16,6 +16,8 @@ A consistent terminal look across Windows and macOS — same font (**Sarasa Mono
 │   └── README.md                # macOS 完整安装步骤
 ├── windows/
 │   ├── settings.json            # Windows Terminal 配置（原样备份）
+│   ├── terminal-guide.md        # 中文操作手册（含新手练习 6 步）
+│   ├── powershell/              # 模块化 PowerShell profile（PSReadLine/Terminal-Icons/zoxide）
 │   └── README.md                # Windows 完整安装步骤
 ├── claude-code/
 │   ├── settings.json            # Claude Code 用户配置（CC-Switch 代理版）
