@@ -99,7 +99,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
                         if k.lower() not in ['transfer-encoding', 'content-length', 'connection']:
                             self.send_header(k, v)
                     self.send_header('Content-Type', 'text/event-stream; charset=utf-8')
-                    self.send_header('Connection', 'keep-alive')
+                    self.send_header('Connection', 'close')
                     self.end_headers()
                     
                     self.wfile.write(b'event: message_start\ndata: {"type": "message_start", "message": {"id": "msg_1", "type": "message", "role": "assistant", "content": [], "model": "glm-5.2", "stop_reason": null, "stop_sequence": null, "usage": {"input_tokens": 10, "output_tokens": 0}}}\n\n')
