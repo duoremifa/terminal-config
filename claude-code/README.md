@@ -25,7 +25,7 @@ Move your Claude Code workflow from Windows to macOS — same editor experience,
 ```
 
 - **Claude Code** 是 CLI 前端（Anthropic 官方出的 Node 工具）
-- **本地 Python 代理 (`fix_bailian_proxy.py`)** 在本地起一个轻量级代理，接管认证并将百炼 API 返回的 OpenAI 流式格式自动翻译为 Claude Code 所需的 Anthropic 格式。
+- **CC-Switch** 在本地起一个代理，把 Claude Code 的 API 调用转到国内模型
 - 你用的模型：GLM-5.2、通义千问 3.7 Plus、DeepSeek v4 Pro、Kimi K2.6（都走百炼）
 
 ## 步骤 1：安装 Node.js（v18+）
@@ -62,26 +62,23 @@ claude --version
 > npm install -g @anthropic-ai/claude-code
 > ```
 
-## 步骤 3：配置并启动本地 Python 代理
+## 步骤 3：安装 CC-Switch（Mac 版）
 
-由于 Claude Code 在底层严格依赖 Anthropic 格式的流式返回（SSE），而百炼通常返回 OpenAI 格式，这会导致直接连接时出错（如无响应或报错）。我们通过 `fix_bailian_proxy.py` 来做轻量转换。
+下载地址：https://github.com/farion1231/cc-switch/releases
 
-1. 打开本目录下的 `fix_bailian_proxy.py`
-2. 将 `BAILIAN_API_KEY = "<YOUR_BAILIAN_API_KEY>"` 替换为你的真实百炼 API Key。
-3. （可选）如果你使用的百炼入口不是通用的，请修改 `BAILIAN_URL`。
-4. 测试运行：
-   ```bash
-   python3 fix_bailian_proxy.py
-   ```
-   它会在 `8080` 端口监听。
+下载 **`CC-Switch-v{version}-macOS.dmg`**（已经 Apple 公证，可以直接打开）。
 
-**推荐设置开机/开终端自动启动：**
-在你的 `~/.zshrc` 中加入以下内容，这样就不需要每次手动开了：
+安装后首次启动：
 
-```bash
-# Start Claude Code Proxy automatically
-lsof -ti:8080 >/dev/null || nohup python3 -u /Users/你的用户名/路径/fix_bailian_proxy.py > /tmp/fix_bailian.log 2>&1 &
-```
+1. 打开 CC-Switch
+2. 在 Providers 里添加 **百炼 / Alibaba Cloud Bailian**
+3. 填入你的百炼 API Key（https://bailian.console.aliyun.com/ 申请）
+4. 在 Models 里配置模型映射（和 Windows 上一样）：
+   - Opus slot → `bailian/qwen3.7-plus`
+   - Sonnet slot → `bailian/kimi-k2.6`
+   - Haiku slot → `bailian/deepseek-v4-pro`
+   - Fable slot → `bailian/glm-5.2`
+5. 启动代理（默认端口 `15721`，和 Windows 一致）
 
 ## 步骤 4：应用配置文件
 
@@ -107,11 +104,14 @@ EOF
 source ~/.zshrc
 ```
 
-## 步骤 5：启动
+## 步骤 6：启动
 
 ```bash
+# 先确保 CC-Switch 代理已经启动（看菜单栏图标）
+
+# 然后
 claude
-# 或者如果你配置了 alias ai="claude"
+# 或者用别名
 ai
 ```
 
@@ -125,8 +125,8 @@ ai
 
 | 字段 | 作用 |
 |---|---|
-| `env.ANTHROPIC_AUTH_TOKEN = "PROXY_MANAGED"` | 告诉 Claude Code 不要自己处理认证，由 Python 代理接管并附加百炼 Key |
-| `env.ANTHROPIC_BASE_URL = "http://127.0.0.1:8080"` | 把请求发到本地 Python 代理 |
+| `env.ANTHROPIC_AUTH_TOKEN = "PROXY_MANAGED"` | 告诉 Claude Code 不要自己处理认证，由 CC-Switch 代理接管 |
+| `env.ANTHROPIC_BASE_URL = "http://127.0.0.1:15721"` | 把请求发到本地 CC-Switch 代理 |
 | `env.ANTHROPIC_DEFAULT_*_MODEL` | 四个档位（opus/sonnet/haiku/fable）对应的模型名 |
 | `env.AUTO_COMPACT_ENABLED = "1"` | 自动压缩上下文（长对话时自动触发） |
 | `env.CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = "75"` | 上下文用到 75% 时自动压缩 |
@@ -226,14 +226,14 @@ source ~/.zshrc
 
 ### 启动后报 `401 Unauthorized` 或 `connection refused`
 
-Python 代理没启动，或者端口不对：
+CC-Switch 没启动，或者端口不对：
 
 ```bash
 # 检查代理是否在监听
-lsof -i :8080
+lsof -i :15721
 ```
 
-如果没输出，说明代理没启动。手动运行 `python3 fix_bailian_proxy.py` 查看是否有报错信息。
+如果没输出，说明 CC-Switch 没启动或端口改了。去 CC-Switch 设置里看实际端口，把 settings.json 里的 `ANTHROPIC_BASE_URL` 改成对应端口。
 
 ### 中文乱码
 
@@ -261,8 +261,8 @@ export LC_ALL="zh_CN.UTF-8"
 
 ## 文件清单 / Files
 
-- `fix_bailian_proxy.py` — 本地 API 流格式转换与代理脚本（修复 Claude Code 与百炼的流式兼容性问题）
-- `settings.json` — 配合本地 Python 代理使用的配置
+- `settings.json` — CC-Switch 代理版配置（公司内网 + CC-Switch 用）
+- `settings-bailian-direct.json` — **直连百炼版配置（推荐，公网可用，不需要 CC-Switch / 公司内网）**
 - `zshrc.append` — 可选的 shell 配置片段（追加到 `~/.zshrc`）
 - `CLAUDE.md` — 项目级指令模板（放到任意项目根目录，Claude Code 会自动读取）
 - `zhengxi-views-install.md` — **郑希观点库 skill 的 Windows 安装最佳实践**（帮朋友装 Claude Code skill 用）
