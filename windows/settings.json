@@ -1,21 +1,21 @@
 {
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions":
+    "actions": 
     [
         {
             "command": "togglePaneZoom",
             "id": "User.toggleZoom"
         },
         {
-            "command":
+            "command": 
             {
                 "action": "copy"
             },
             "id": "User.copy"
         },
         {
-            "command":
+            "command": 
             {
                 "action": "newTab"
             },
@@ -26,14 +26,14 @@
             "id": "User.paste"
         },
         {
-            "command":
+            "command": 
             {
                 "action": "splitPane"
             },
             "id": "User.splitPaneH"
         },
         {
-            "command":
+            "command": 
             {
                 "action": "splitPane",
                 "split": "right"
@@ -47,9 +47,9 @@
     ],
     "alwaysShowTabs": true,
     "copyFormatting": "none",
-    "copyOnSelect": false,
+    "copyOnSelect": true,
     "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
-    "keybindings":
+    "keybindings": 
     [
         {
             "id": "User.splitPaneH",
@@ -65,23 +65,23 @@
         }
     ],
     "launchMode": "default",
-    "newTabMenu":
+    "newTabMenu": 
     [
         {
             "type": "remainingProfiles"
         }
     ],
-    "profiles":
+    "profiles": 
     {
-        "defaults":
+        "defaults": 
         {
             "antialiasingMode": "cleartype",
             "colorScheme": "macOS Dark",
             "cursorShape": "bar",
-            "font":
+            "font": 
             {
                 "face": "Sarasa Mono SC",
-                "features":
+                "features": 
                 {
                     "calt": 1
                 },
@@ -93,7 +93,7 @@
             "scrollbarState": "hidden",
             "useAcrylic": true
         },
-        "list":
+        "list": 
         [
             {
                 "commandline": "powershell.exe -NoLogo",
@@ -109,10 +109,21 @@
                 "hidden": false,
                 "name": "Command Prompt",
                 "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "hidden": false,
+                "name": "Command Prompt"
+            },
+            {
+                "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
+                "hidden": false,
+                "name": "Azure Cloud Shell",
+                "source": "Windows.Terminal.Azure"
             }
         ]
     },
-    "schemes":
+    "schemes": 
     [
         {
             "background": "#1E1E1E",

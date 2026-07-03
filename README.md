@@ -18,6 +18,7 @@ A consistent terminal look across Windows and macOS — same font (**Sarasa Mono
 │   ├── settings.json            # Windows Terminal 配置（原样备份）
 │   ├── terminal-guide.md        # 中文操作手册（含新手练习 6 步）
 │   ├── powershell/              # 模块化 PowerShell profile（PSReadLine/Terminal-Icons/zoxide）
+│   ├── claude-workflow/         # Claude Code 项目管理工作流（pj/cc/cr/pl + 任务中心）
 │   └── README.md                # Windows 完整安装步骤
 ├── claude-code/
 │   ├── settings.json            # Claude Code 用户配置（CC-Switch 代理版）
@@ -42,6 +43,9 @@ A consistent terminal look across Windows and macOS — same font (**Sarasa Mono
 
 详细步骤见 [`macos/README.md`](macos/README.md)。
 
+**Claude Code 项目工作流 (Mac)**:
+见 [`macos/claude-workflow/README.md`](macos/claude-workflow/README.md) 获取针对 macOS + Zsh + Obsidian 适配的工作流环境。
+
 ### Windows
 
 1. 安装 Sarasa Mono SC 字体（per-user，无需管理员）
@@ -50,12 +54,23 @@ A consistent terminal look across Windows and macOS — same font (**Sarasa Mono
 
 详细步骤见 [`windows/README.md`](windows/README.md)。
 
+### Claude Code 项目工作流（Windows / 通用）
+
+用**终端 + Obsidian + Claude Code**管理多个项目的日常工作流。
+
+1. 部署 PowerShell 模块：`Copy-Item windows\claude-workflow\claude.ps1 $env:USERPROFILE\Documents\WindowsPowerShell\profile.d\06-claude.ps1`
+2. 设置项目根：`$env:CLAUDE_PROJECT_ROOT = "你的项目目录"`
+3. 复制 Obsidian 任务中心模板到 vault 根
+4. 用 `pj` / `cc` / `cr` / `pl` 管理项目和会话
+
+详细文档见 [`windows/claude-workflow/README.md`](windows/claude-workflow/README.md)。
+
 ### Claude Code (Mac)
 
 1. 装 Node.js：`brew install node`
 2. 装 Claude Code：`npm install -g @anthropic-ai/claude-code`
-3. 装 CC-Switch Mac 版：https://github.com/farion1231/cc-switch/releases （dmg，已经 Apple 公证）
-4. 在 CC-Switch 里配置百炼 API Key + 模型映射
+3. 复制代理脚本：`cp claude-code/fix_bailian_proxy.py ~/fix_bailian_proxy.py`，并将里面的 API Key 换成你自己的。
+4. 在 `~/.zshrc` 中添加启动代码：`echo "lsof -ti:8080 >/dev/null || nohup python3 -u ~/fix_bailian_proxy.py > /tmp/fix_bailian.log 2>&1 &" >> ~/.zshrc`
 5. 复制配置：`cp claude-code/settings.json ~/.claude/settings.json`
 6. 启动：`claude`（或先 `cat claude-code/zshrc.append >> ~/.zshrc` 加个别名）
 

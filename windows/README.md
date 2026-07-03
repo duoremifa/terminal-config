@@ -139,6 +139,16 @@ Copy-Item "$src\profile.d" $dst -Recurse -Force
 - §13 一页速查表（贴工位）
 - §14 **新手练习**（6 个循序渐进的练习任务 + 12 条自检清单）
 
+## Claude Code 项目工作流
+
+[`claude-workflow/`](claude-workflow/) 是一套**用终端 + Obsidian + Claude Code 管理多项目**的工作流模板：
+
+- `claude.ps1` — PowerShell 快捷命令（`pj` / `cc` / `cr` / `pl`），路径通过环境变量配置
+- `setup.ps1` — 一键部署脚本
+- `templates/` — `CLAUDE.md` / `TODO.md` / 任务中心 / 操作指南模板
+
+详见 [`claude-workflow/README.md`](claude-workflow/README.md)。
+
 ## 卸载 / 回滚
 
 ```powershell

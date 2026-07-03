@@ -9,7 +9,6 @@ if ([Environment]::UserInteractive -and -not [Console]::IsOutputRedirected) {
     Set-PSReadLineOption -HistoryNoDuplicates
     Set-PSReadLineOption -HistorySaveStyle SaveIncrementally
     Set-PSReadLineOption -MaximumHistoryCount 4000
-    Set-PSReadLineOption -ContinuousPrediction
 
     Set-PSReadLineKeyHandler -Key Tab -Function Complete
     Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
