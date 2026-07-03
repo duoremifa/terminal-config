@@ -120,14 +120,16 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
                                 chunk_data = json.loads(json_str)
                                 if 'choices' in chunk_data and len(chunk_data['choices']) > 0:
                                     delta = chunk_data['choices'][0].get('delta', {})
-                                    if 'content' in delta and delta['content']:
-                                        content = delta['content']
+                                    reasoning = delta.get('reasoning_content') or ''
+                                    content = delta.get('content') or ''
+                                    text_to_send = reasoning + content
+                                    if text_to_send:
                                         anthropic_chunk = {
                                             "type": "content_block_delta",
                                             "index": 0,
                                             "delta": {
                                                 "type": "text_delta",
-                                                "text": content
+                                                "text": text_to_send
                                             }
                                         }
                                         self.wfile.write(f'event: content_block_delta\ndata: {json.dumps(anthropic_chunk)}\n\n'.encode('utf-8'))
