@@ -1,7 +1,7 @@
 {
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "PROXY_MANAGED",
-    "ANTHROPIC_BASE_URL": "http://127.0.0.1:15721",
+    "ANTHROPIC_BASE_URL": "http://127.0.0.1:4000",
 
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-8[1M]",
     "ANTHROPIC_DEFAULT_OPUS_MODEL_NAME": "bailian/qwen3.7-plus",
