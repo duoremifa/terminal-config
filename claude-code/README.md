@@ -50,34 +50,39 @@ npm install -g @anthropic-ai/claude-code
 pip3 install 'litellm[proxy]'
 ```
 
-## 步骤 3：应用配置文件
+## 步骤 3：应用配置文件与代理拦截器
 
-把本目录下的 `settings.json` 复制到 `~/.claude/settings.json`，把 `litellm_config.yaml` 复制到 `~/.claude/litellm_config.yaml`：
+把本目录下的 `settings.json` 复制到 `~/.claude/settings.json`，把 `litellm_config.yaml` 复制到 `~/.claude/litellm_config.yaml`，把 `claude_code_proxy.py` 复制到 `~/.claude/claude_code_proxy.py`：
 
 ```bash
 mkdir -p ~/.claude
 cp settings.json ~/.claude/settings.json
 cp litellm_config.yaml ~/.claude/litellm_config.yaml
+cp claude_code_proxy.py ~/.claude/claude_code_proxy.py
 ```
 
-**编辑 `~/.claude/litellm_config.yaml`**：
-找到 `os.environ/OPENAI_API_KEY` 的地方。因为我们会在下一步通过环境变量注入 API Key，所以**这里不需要修改，保持原样即可**。这个配置文件能解决 Claude Code 特有的 `thinking` 等不兼容参数导致百炼报错 `InvalidParameter` 的问题。
+**关于配置文件**：
+这个拦截器（`claude_code_proxy.py`）会自动修复 Claude 发出的非法 `max_tokens` 参数，以及去除百炼 API 不支持的 `thinking` 参数，彻底根除百炼的报错。
 
-## 步骤 4：启动 LiteLLM 代理服务
+## 步骤 4：启动代理服务组合
 
-你需要把百炼的 API Key 填入环境变量，并用 LiteLLM 启动一个后台代理。
+你需要启动两个后台服务：一个拦截器（端口 4000）拦截修复参数，和一个 LiteLLM 翻译器（端口 4001）。
 
 ```bash
 # 替换为你的百炼 API Key
 export OPENAI_API_KEY="sk-你的百炼APIKey"
 
-# 启动代理（默认监听在 4000 端口）
-nohup litellm --config ~/.claude/litellm_config.yaml > /tmp/litellm.log 2>&1 &
+# 杀死老旧进程
+lsof -ti:4000,4001 | xargs kill -9 2>/dev/null
+
+# 启动 LiteLLM 翻译器 (监听 4001)
+nohup litellm --config ~/.claude/litellm_config.yaml --port 4001 > /tmp/litellm.log 2>&1 &
+
+# 启动 Python 拦截器 (监听 4000 给 Claude Code 使用)
+nohup python3 ~/.claude/claude_code_proxy.py > /tmp/proxy.log 2>&1 &
 ```
 
-> **注意：** 如果你需要更换模型，请修改 `~/.claude/litellm_config.yaml` 中的 `model: "openai/qwen-plus"` 为你想要的模型，并重启代理：
-> `lsof -ti:4000 | xargs kill -9`
-> 然后重新运行上面的代理启动命令。
+> **注意：** 如果你需要更换模型，请修改 `~/.claude/litellm_config.yaml` 中的 `model: "dashscope/qwen-plus"` 为你想要的模型，并重启上述两个代理服务。
 
 ## 步骤 5：配置 shell 别名（可选）
 
@@ -90,7 +95,7 @@ cat >> ~/.zshrc << 'ALIAS_EOF'
 alias ai="claude"
 
 # 如果你希望每次开机自动启动代理，可以把代理启动脚本写成一个 alias
-alias start-ai-proxy='lsof -ti:4000 | xargs kill -9 2>/dev/null; export OPENAI_API_KEY="sk-你的百炼APIKey"; nohup litellm --config ~/.claude/litellm_config.yaml > /tmp/litellm.log 2>&1 & echo "LiteLLM 代理已启动"'
+alias start-ai-proxy='lsof -ti:4000,4001 | xargs kill -9 2>/dev/null; export OPENAI_API_KEY="sk-你的百炼APIKey"; nohup litellm --config ~/.claude/litellm_config.yaml --port 4001 > /tmp/litellm.log 2>&1 & nohup python3 ~/.claude/claude_code_proxy.py > /tmp/proxy.log 2>&1 & echo "代理服务组已启动"'
 ALIAS_EOF
 
 source ~/.zshrc
