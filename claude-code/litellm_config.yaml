@@ -31,3 +31,35 @@ model_list:
       drop_params: true
       extra_body:
         result_format: "message"
+  - model_name: "claude-opus-4-8[1M]"
+    litellm_params:
+      model: "openai/qwen-plus"
+      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      api_key: "os.environ/OPENAI_API_KEY"
+      drop_params: true
+      extra_body:
+        result_format: "message"
+  - model_name: "claude-sonnet-4-6[1M]"
+    litellm_params:
+      model: "openai/qwen-plus"
+      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      api_key: "os.environ/OPENAI_API_KEY"
+      drop_params: true
+      extra_body:
+        result_format: "message"
+  - model_name: "claude-haiku-4-5"
+    litellm_params:
+      model: "openai/qwen-plus"
+      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      api_key: "os.environ/OPENAI_API_KEY"
+      drop_params: true
+      extra_body:
+        result_format: "message"
+  - model_name: "glm-5.2[1M]"
+    litellm_params:
+      model: "openai/qwen-plus"
+      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      api_key: "os.environ/OPENAI_API_KEY"
+      drop_params: true
+      extra_body:
+        result_format: "message"
