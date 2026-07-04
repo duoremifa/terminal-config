@@ -118,6 +118,12 @@ lsof -i :4000
 ```
 杀掉后重新运行代理启动命令。
 
+### `500 Internal Server Error` 报错处理（公司内网域名 DNS 解析失败）
+如果你看到 Claude Code 报 `500 Internal Server Error`，并且 proxy.log 里的底层报错包含 `[Errno 8] nodename nor servname provided, or not known`。
+这**百分之百**是因为你正试图连接公司的**内网测试域名**（例如 `codingxrui.geely-test.com`），但在当前网络环境下（如：在家里没开 VPN）DNS 根本无法解析该域名！
+- **必须开启公司 VPN**（如深信服、AnyConnect 等）才能打通内网 DNS。
+- 注意：就算你用了 Clash / Surge 代理软件抓到了局域网请求（可能 nslookup 会返回 198.18.x.x 这样的 Fake IP），但最终真实的建立连接仍然必须依靠系统底层网络隧道。请乖乖把 VPN 连上即可解决！
+
 ## 文件清单 / Files
 
 - `settings.json` — LiteLLM 代理版配置（配合端口 4000 使用）
