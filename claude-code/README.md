@@ -23,8 +23,8 @@
 ```
 
 - **Claude Code** 是 Anthropic 官方的 CLI 前端，只能发送 Anthropic 格式的请求。
-- **LiteLLM** 在本地 (`http://127.0.0.1:4000`) 启动代理服务，将 Claude Code 的请求（包含文件读取等复杂的 Tool Calls）无缝翻译成 OpenAI 格式。
-- **阿里云百炼** 接收 OpenAI 格式请求并返回结果，LiteLLM 再将其翻译回 Anthropic 格式给 Claude Code。
+- **自定义拦截器** 在本地 (`http://127.0.0.1:4000`) 启动，将 Claude Code 的请求拦截，修复非法的 `max_tokens` 与 `thinking` 参数。
+- **公司内部网关** 接收修复后的标准 Anthropic 请求并返回结果给 Claude Code。
 
 ## 步骤 1：安装 Node.js（v18+）与 Python 3
 
@@ -52,37 +52,26 @@ pip3 install 'litellm[proxy]'
 
 ## 步骤 3：应用配置文件与代理拦截器
 
-把本目录下的 `settings.json` 复制到 `~/.claude/settings.json`，把 `litellm_config.yaml` 复制到 `~/.claude/litellm_config.yaml`，把 `claude_code_proxy.py` 复制到 `~/.claude/claude_code_proxy.py`：
+把本目录下的 `settings.json` 复制到 `~/.claude/settings.json`，把 `claude_code_proxy.py` 复制到 `~/.claude/claude_code_proxy.py`：
 
 ```bash
 mkdir -p ~/.claude
 cp settings.json ~/.claude/settings.json
-cp litellm_config.yaml ~/.claude/litellm_config.yaml
 cp claude_code_proxy.py ~/.claude/claude_code_proxy.py
 ```
 
-**关于配置文件**：
-这个拦截器（`claude_code_proxy.py`）会自动修复 Claude 发出的非法 `max_tokens` 参数，以及去除百炼 API 不支持的 `thinking` 参数，彻底根除百炼的报错。
+**关于拦截器**：
+这个拦截器（`claude_code_proxy.py`）会自动修复 Claude 发出的非法 `max_tokens` 参数，以及去除百炼 API 不支持的 `thinking` 参数，并将请求直接转发给你公司的内部免费接口。
 
-## 步骤 4：启动代理服务组合
-
-你需要启动两个后台服务：一个拦截器（端口 4000）拦截修复参数，和一个 LiteLLM 翻译器（端口 4001）。
+## 步骤 4：启动代理拦截器
 
 ```bash
-# 替换为你的百炼 API Key
-export OPENAI_API_KEY="sk-你的百炼APIKey"
-
 # 杀死老旧进程
 lsof -ti:4000,4001 | xargs kill -9 2>/dev/null
 
-# 启动 LiteLLM 翻译器 (监听 4001)
-nohup litellm --config ~/.claude/litellm_config.yaml --port 4001 > /tmp/litellm.log 2>&1 &
-
-# 启动 Python 拦截器 (监听 4000 给 Claude Code 使用)
-nohup python3 ~/.claude/claude_code_proxy.py > /tmp/proxy.log 2>&1 &
+# 启动 Python 拦截器 (监听 4000)
+nohup /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 ~/.claude/claude_code_proxy.py > /tmp/proxy.log 2>&1 &
 ```
-
-> **注意：** 如果你需要更换模型，请修改 `~/.claude/litellm_config.yaml` 中的 `model: "dashscope/qwen-plus"` 为你想要的模型，并重启上述两个代理服务。
 
 ## 步骤 5：配置 shell 别名（可选）
 
@@ -95,7 +84,7 @@ cat >> ~/.zshrc << 'ALIAS_EOF'
 alias ai="claude"
 
 # 如果你希望每次开机自动启动代理，可以把代理启动脚本写成一个 alias
-alias start-ai-proxy='lsof -ti:4000,4001 | xargs kill -9 2>/dev/null; export OPENAI_API_KEY="sk-你的百炼APIKey"; nohup litellm --config ~/.claude/litellm_config.yaml --port 4001 > /tmp/litellm.log 2>&1 & nohup python3 ~/.claude/claude_code_proxy.py > /tmp/proxy.log 2>&1 & echo "代理服务组已启动"'
+alias start-ai-proxy='lsof -ti:4000,4001 | xargs kill -9 2>/dev/null; nohup /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 ~/.claude/claude_code_proxy.py > /tmp/proxy.log 2>&1 & echo "公司内网代理已启动"'
 ALIAS_EOF
 
 source ~/.zshrc
