@@ -50,33 +50,34 @@ npm install -g @anthropic-ai/claude-code
 pip3 install 'litellm[proxy]'
 ```
 
-## 步骤 3：启动 LiteLLM 代理服务
+## 步骤 3：应用配置文件
+
+把本目录下的 `settings.json` 复制到 `~/.claude/settings.json`，把 `litellm_config.yaml` 复制到 `~/.claude/litellm_config.yaml`：
+
+```bash
+mkdir -p ~/.claude
+cp settings.json ~/.claude/settings.json
+cp litellm_config.yaml ~/.claude/litellm_config.yaml
+```
+
+**编辑 `~/.claude/litellm_config.yaml`**：
+找到 `os.environ/OPENAI_API_KEY` 的地方。因为我们会在下一步通过环境变量注入 API Key，所以**这里不需要修改，保持原样即可**。这个配置文件能解决 Claude Code 特有的 `thinking` 等不兼容参数导致百炼报错 `InvalidParameter` 的问题。
+
+## 步骤 4：启动 LiteLLM 代理服务
 
 你需要把百炼的 API Key 填入环境变量，并用 LiteLLM 启动一个后台代理。
-目前由于百炼官方兼容接口不存在 `glm-5.2`，强烈建议使用通义千问最强模型 `qwen-plus` 或 `qwen-max`。
 
 ```bash
 # 替换为你的百炼 API Key
 export OPENAI_API_KEY="sk-你的百炼APIKey"
 
 # 启动代理（默认监听在 4000 端口）
-nohup litellm --model openai/qwen-plus --api_base https://dashscope.aliyuncs.com/compatible-mode/v1 > /tmp/litellm.log 2>&1 &
+nohup litellm --config ~/.claude/litellm_config.yaml > /tmp/litellm.log 2>&1 &
 ```
 
-> **注意：** 如果你需要更换模型，请先结束旧的代理进程：
+> **注意：** 如果你需要更换模型，请修改 `~/.claude/litellm_config.yaml` 中的 `model: "openai/qwen-plus"` 为你想要的模型，并重启代理：
 > `lsof -ti:4000 | xargs kill -9`
-> 然后把启动命令中的 `openai/qwen-plus` 换成你需要测试的其他百炼模型，重新运行即可。
-
-## 步骤 4：应用 Claude 配置文件
-
-把本目录下的 `settings.json` 复制到 `~/.claude/settings.json`：
-
-```bash
-mkdir -p ~/.claude
-cp settings.json ~/.claude/settings.json
-```
-
-这个配置文件将 `ANTHROPIC_BASE_URL` 设置为了 `http://127.0.0.1:4000`，让 Claude Code 自动连上 LiteLLM 代理。
+> 然后重新运行上面的代理启动命令。
 
 ## 步骤 5：配置 shell 别名（可选）
 
@@ -89,7 +90,7 @@ cat >> ~/.zshrc << 'ALIAS_EOF'
 alias ai="claude"
 
 # 如果你希望每次开机自动启动代理，可以把代理启动脚本写成一个 alias
-alias start-ai-proxy='lsof -ti:4000 | xargs kill -9 2>/dev/null; export OPENAI_API_KEY="sk-你的百炼APIKey"; nohup litellm --model openai/qwen-plus --api_base https://dashscope.aliyuncs.com/compatible-mode/v1 > /tmp/litellm.log 2>&1 & echo "LiteLLM 代理已启动"'
+alias start-ai-proxy='lsof -ti:4000 | xargs kill -9 2>/dev/null; export OPENAI_API_KEY="sk-你的百炼APIKey"; nohup litellm --config ~/.claude/litellm_config.yaml > /tmp/litellm.log 2>&1 & echo "LiteLLM 代理已启动"'
 ALIAS_EOF
 
 source ~/.zshrc

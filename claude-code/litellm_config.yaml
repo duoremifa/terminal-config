@@ -1,0 +1,33 @@
+model_list:
+  - model_name: "claude-3-5-sonnet-20241022"
+    litellm_params:
+      model: "openai/qwen-plus"
+      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      api_key: "os.environ/OPENAI_API_KEY"
+      drop_params: true
+      extra_body:
+        result_format: "message"
+  - model_name: "claude-3-7-sonnet-20250219"
+    litellm_params:
+      model: "openai/qwen-plus"
+      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      api_key: "os.environ/OPENAI_API_KEY"
+      drop_params: true
+      extra_body:
+        result_format: "message"
+  - model_name: "claude-3-5-haiku-20241022"
+    litellm_params:
+      model: "openai/qwen-plus"
+      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      api_key: "os.environ/OPENAI_API_KEY"
+      drop_params: true
+      extra_body:
+        result_format: "message"
+  - model_name: "claude-3-opus-20240229"
+    litellm_params:
+      model: "openai/qwen-plus"
+      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      api_key: "os.environ/OPENAI_API_KEY"
+      drop_params: true
+      extra_body:
+        result_format: "message"
