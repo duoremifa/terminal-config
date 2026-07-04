@@ -1,65 +1,41 @@
 model_list:
   - model_name: "claude-3-5-sonnet-20241022"
     litellm_params:
-      model: "openai/qwen-plus"
-      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      model: "dashscope/qwen-plus"
       api_key: "os.environ/OPENAI_API_KEY"
       drop_params: true
-      extra_body:
-        result_format: "message"
   - model_name: "claude-3-7-sonnet-20250219"
     litellm_params:
-      model: "openai/qwen-plus"
-      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      model: "dashscope/qwen-plus"
       api_key: "os.environ/OPENAI_API_KEY"
       drop_params: true
-      extra_body:
-        result_format: "message"
   - model_name: "claude-3-5-haiku-20241022"
     litellm_params:
-      model: "openai/qwen-plus"
-      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      model: "dashscope/qwen-plus"
       api_key: "os.environ/OPENAI_API_KEY"
       drop_params: true
-      extra_body:
-        result_format: "message"
   - model_name: "claude-3-opus-20240229"
     litellm_params:
-      model: "openai/qwen-plus"
-      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      model: "dashscope/qwen-plus"
       api_key: "os.environ/OPENAI_API_KEY"
       drop_params: true
-      extra_body:
-        result_format: "message"
   - model_name: "claude-opus-4-8"
     litellm_params:
-      model: "openai/qwen-plus"
-      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      model: "dashscope/qwen-plus"
       api_key: "os.environ/OPENAI_API_KEY"
       drop_params: true
-      extra_body:
-        result_format: "message"
   - model_name: "claude-sonnet-4-6"
     litellm_params:
-      model: "openai/qwen-plus"
-      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      model: "dashscope/qwen-plus"
       api_key: "os.environ/OPENAI_API_KEY"
       drop_params: true
-      extra_body:
-        result_format: "message"
   - model_name: "claude-haiku-4-5"
     litellm_params:
-      model: "openai/qwen-plus"
-      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      model: "dashscope/qwen-plus"
       api_key: "os.environ/OPENAI_API_KEY"
       drop_params: true
-      extra_body:
-        result_format: "message"
   - model_name: "glm-5.2"
     litellm_params:
-      model: "openai/qwen-plus"
-      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      model: "dashscope/qwen-plus"
       api_key: "os.environ/OPENAI_API_KEY"
       drop_params: true
-      extra_body:
-        result_format: "message"
